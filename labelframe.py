@@ -2,30 +2,32 @@
 
 import Image;
 import glob;
-import sys;
-import os;
-import cv2;
-import time;
-import argparse;
-import itertools;
-import numpy as np;
+import time
 
+start = time.time()
+import argparse
+import cv2
+import itertools
+import os
+from sklearn import svm
+import numpy as np
 np.set_printoptions(precision=2)
+
+import sys
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, ".."))
 
 import openface
 import openface.helper
 from openface.data import iterImgs
+from sklearn.externals import joblib
 
-# Path to include pre-trained models
 modelDir = os.path.join(fileDir, '..', 'models')
 dlibModelDir = os.path.join(modelDir, 'dlib')
 openfaceModelDir = os.path.join(modelDir, 'openface')
 
 parser = argparse.ArgumentParser()
 
-# Path to dlib face predictor
 parser.add_argument('--dlibFaceMean', type=str, help="Path to dlib's face predictor.",
                     default=os.path.join(dlibModelDir, "mean.csv"))
 parser.add_argument('--dlibFacePredictor', type=str, help="Path to dlib's face predictor.",
@@ -34,19 +36,11 @@ parser.add_argument('--dlibRoot', type=str,
                     default=os.path.expanduser(
                         "~/src/dlib-18.16/python_examples"),
                     help="dlib directory with the dlib.so Python library.")
-
-# Path to torch neural net
 parser.add_argument('--networkModel', type=str, help="Path to Torch network model.",
                     default=os.path.join(openfaceModelDir, 'nn4.v1.t7'))
-
-# Specify image dimension. 96 in this case.
 parser.add_argument('--imgDim', type=int,
                     help="Default image dimension.", default=96)
-
-# Specify whether to use CUDA
 parser.add_argument('--cuda', action='store_true')
-
-#Specify whether to use Verbose
 parser.add_argument('--verbose', action='store_true')
 
 args = parser.parse_args()
@@ -61,10 +55,10 @@ if args.verbose:
 
 start = time.time()
 align = NaiveDlib(args.dlibFaceMean, args.dlibFacePredictor)
+net = openface.TorchWrap(args.networkModel, imgDim=args.imgDim, cuda=args.cuda)
 if args.verbose:
     print("Loading the dlib and OpenFace models took {} seconds.".format(
         time.time() - start))
-
 
 class LabelFrame:
 
