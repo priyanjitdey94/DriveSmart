@@ -68,6 +68,9 @@ if args.verbose:
 
 class LabelFrame:
 
+	def __init__(self):
+		self.feat_x=[];
+		self.feat_y=[];
 
 	#def isValidFrame(self):
 
@@ -75,8 +78,11 @@ class LabelFrame:
 
 	#def getFrame(self):
 
-	def labelFrame(self,path):
-		counter=0;
+	def getEyePatch(self,path):
+		num=0;
+		if not os.path.exists(path+"_eye_patch"):
+			os.mkdirs(path+"_eye_patch");
+
 		try:
 			os.chdir(path);
 		except:
@@ -85,7 +91,7 @@ class LabelFrame:
 			return;
 
 		for file in glob.glob("*.jpg"):
-			img=Image.open(path+file);
+			img=Image.open(path+"/"+file);
 			if img is None:
 				print "Couldn't open "+file+". Moving to next one.";continue;
 			if args.verbose:
@@ -131,7 +137,37 @@ class LabelFrame:
 		    vis2 = np.concatenate((vis, rs_img2), axis=1);
 		    vis3 = np.concatenate((vis2, rs_img3), axis=1);
 		    
-		    cv2.imwrite('/home/prithviraj/closed_eyes/c_patch_'+str(num)+'.jpg',img2);
-		    cv2.imwrite('/home/prithviraj/narrow_closed_eyes/n_c_patch_'+str(num)+'.jpg',img3);
+		    cv2.imwrite(path+"_eye_patch/"+str(num)+".jpg",img2);
+		    cv2.imwrite(path+"_eye_patch/"+str(num)+".jpg",img3);
 		    cv2.imshow('visualization', vis3);
 		    cv2.waitKey(1);
+		    num+=1;
+
+		print "Eye patch extraction successful.Moving to labelling....";
+
+	def getRep(imgPath):
+	    if args.verbose:
+	        print("Processing {}.".format(imgPath))
+	    img = cv2.imread(imgPath)
+	    
+	    img = cv2.resize(img,(96,96))
+	    rep = net.forwardImage(img)
+	    if args.verbose:
+	        print("  + OpenFace forward pass took {} seconds.".format(time.time() - start))
+	        print("Representation:")
+	        print(rep)
+	        print("-----\n")
+	    return rep
+
+	def labelFrame(self,path,eyeState):
+		for img in os.listdir(path):
+		    d = getRep(path+"/"+img)
+		    print d.shape
+		    print "Appending..", img
+		    self.feat_x.append(d)
+		    self.feat_y.append(eyeState);
+
+		print "Storing............"
+		os.mkdir('/home/prithviraj/open_feature')
+		np.save('/home/prithviraj/open_feature/of.npy', feat_x)
+		np.save('/home/prithviraj/open_feature/oflabel.npy', feat_y)
