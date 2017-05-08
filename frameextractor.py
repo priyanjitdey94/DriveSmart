@@ -18,27 +18,27 @@ class FrameExtractor:
 	def setVideoFileName(self,path):
 		self.videoFilePath=path;
 
-	def getVideoFileName(self):
-		try:
-			os.chdir(self.videoFilePath);
-		except:
-			print "Path Do not exist.";
+	def getVideoFileName(self,eyeStatePath):
+		if not os.path.exists(eyeStatePath):
+			print "Not a proper location of eye_state file.";
+			return;
 
 		videos=[];
-		for file in glob.glob("*.mp4"):
+		for file in open(eyeStatePath):
+			file.rstrip('\n');
 			videos.append(file);
 
 		return videos;
 
-	def fetchFrame(self):
+	def fetchFrame(self,eyeState):
 		self.videoFileName=self.getVideoFileName();
 		
-		if not os.path.exists(self.videoFilePath+"/"+"Frames"):
-			os.makedirs(self.videoFilePath+"/Frames");
+		if not os.path.exists(self.videoFilePath+"/"+"Frames_"+eyeState):
+			os.makedirs(self.videoFilePath+"/Frames_"+eyeState);
 
 		for file in self.videoFileName:
 			try:
-			curVideo=cv2.VideoCapture(self.videoFilePath+"/"+file);
+				curVideo=cv2.VideoCapture(self.videoFilePath+"/"+file);
 			except:
 				print "Cannot read "+file;continue;
 
@@ -51,7 +51,7 @@ class FrameExtractor:
 			while self.success:
 				self.success,self.videoFrame=curVideo.read();
 
-				str=self.videoFilePath+"/Frames/frame%d.jpg";
+				str=self.videoFilePath+"/Frames_"+eyeState"/frame%d.jpg";
 				cv2.imwrite(str%self.frameCount,self.videoFrame);
 				self.frameCount+=1;
 
