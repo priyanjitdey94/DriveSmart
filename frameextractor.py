@@ -30,8 +30,8 @@ class FrameExtractor:
 
 		return videos;
 
-	def fetchFrame(self,eyeState):
-		self.videoFileName=self.getVideoFileName();
+	def fetchFrame(self,eyeStatePath,eyeState):
+		self.videoFileName=self.getVideoFileName(eyeStatePath);
 		
 		if not os.path.exists(self.videoFilePath+"/"+"Frames_"+eyeState):
 			os.makedirs(self.videoFilePath+"/Frames_"+eyeState);
