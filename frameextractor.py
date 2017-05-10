@@ -51,7 +51,7 @@ class FrameExtractor:
 			while self.success:
 				self.success,self.videoFrame=curVideo.read();
 
-				str=self.videoFilePath+"/Frames_"+eyeState"/frame"+self.frameCount+".jpg";
+				str=self.videoFilePath+"/Frames_"+eyeState+"/frame"+self.frameCount+".jpg";
 				cv2.imwrite(str,self.videoFrame);
 				self.frameCount+=1;
 
@@ -61,7 +61,7 @@ class FrameExtractor:
 
 
 
-FE=FrameExtractor();
-FE.setVideoFileName("/home/priyanjit/Codes");
-FE.fetchFrame();
+#FE=FrameExtractor();
+#FE.setVideoFileName("/home/priyanjit/Codes");
+#FE.fetchFrame();
 ####
