@@ -51,8 +51,8 @@ class FrameExtractor:
 			while self.success:
 				self.success,self.videoFrame=curVideo.read();
 
-				str=self.videoFilePath+"/Frames_"+eyeState"/frame%d.jpg";
-				cv2.imwrite(str%self.frameCount,self.videoFrame);
+				str=self.videoFilePath+"/Frames_"+eyeState"/frame"+self.frameCount+".jpg";
+				cv2.imwrite(str,self.videoFrame);
 				self.frameCount+=1;
 
 			print "Frames of "+file+" fetched successfully.";
