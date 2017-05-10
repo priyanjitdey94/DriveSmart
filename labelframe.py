@@ -146,15 +146,22 @@ class LabelFrame:
 			print("-----\n")
 		return rep
 
-	def labelFrame(self,path,eyeState):
-		for img in os.listdir(path):
+	def labelFrame(self,path):
+		for img in os.listdir(path+"Frames_0_wide_eye_patch"):
 			d = self.getRep(path+"/"+img)
 			print d.shape
 			print "Appending..", img
 			self.feat_x.append(d)
-			self.feat_y.append(eyeState);
+			self.feat_y.append(0);
+
+		for img in os.listdir(path+"Frames_1_wide_eye_patch"):
+			d = self.getRep(path+"/"+img)
+			print d.shape
+			print "Appending..", img
+			self.feat_x.append(d)
+			self.feat_y.append(1);
 
 		print "Storing............"
-		os.mkdir('/home/prithviraj/open_feature')
-		np.save('/home/prithviraj/open_feature/of.npy', feat_x)
-		np.save('/home/prithviraj/open_feature/oflabel.npy', feat_y)
+		os.mkdir('/home/prithviraj/open_feature_new')
+		np.save('/home/prithviraj/open_feature_new/of.npy', feat_x)
+		np.save('/home/prithviraj/open_feature_new/oflabel.npy', feat_y)
