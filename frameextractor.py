@@ -33,8 +33,8 @@ class FrameExtractor:
 	def fetchFrame(self,eyeStatePath,eyeState):
 		self.videoFileName=self.getVideoFileName(eyeStatePath);
 		
-		if not os.path.exists(self.videoFilePath+"/"+"Frames_"+eyeState):
-			os.makedirs(self.videoFilePath+"/Frames_"+eyeState);
+		if not os.path.exists(self.videoFilePath+"/"+"Frames_"+str(eyeState)):
+			os.makedirs(self.videoFilePath+"/Frames_"+ str(eyeState));
 
 		for file in self.videoFileName:
 			try:
@@ -51,8 +51,8 @@ class FrameExtractor:
 			while self.success:
 				self.success,self.videoFrame=curVideo.read();
 
-				str=self.videoFilePath+"/Frames_"+eyeState+"/frame"+self.frameCount+".jpg";
-				cv2.imwrite(str,self.videoFrame);
+				f_img=self.videoFilePath+"/Frames_"+str(eyeState)+str(self.frameCount)+".jpg";
+				cv2.imwrite(f_img,self.videoFrame);
 				self.frameCount+=1;
 
 			print "Frames of "+file+" fetched successfully.";
