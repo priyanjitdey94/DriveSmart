@@ -48,7 +48,7 @@ if args.verbose:
 
 start = time.time()
 align = NaiveDlib(args.dlibFaceMean, args.dlibFacePredictor)
-net = openface.TorchWrap(args.networkModel, imgDim=args.imgDim, cuda=args.cuda)
+
 if args.verbose:
 	print("Loading the dlib and OpenFace models took {} seconds.".format(
 		time.time() - start))
@@ -79,11 +79,11 @@ class TrainModel:
 		self.modelFormat=format;
 
 	def startTraining(self):
-		feat_x = np.load('/home/prithviraj/open_feature/of.npy');
-		feat_y= np.load('/home/prithviraj/open_feature/oflabel.npy');
+		feat_x = np.load('/home/prithviraj/open_feature_new/of.npy');
+		feat_y= np.load('/home/prithviraj/open_feature_new/oflabel.npy');
 		print feat_x.shape, feat_y.shape;
 		print "Training...........";
 		clf = svm.SVC();
 		clf.fit(feat_x, feat_y);
-		joblib.dump(clf, '/home/prithviraj/open_feature/trained_svm.pkl',compress=1);
+		joblib.dump(clf, '/home/prithviraj/open_feature_new/trained_svm.pkl',compress=1);
 		print "Training Complete.";
