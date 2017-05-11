@@ -160,3 +160,13 @@ class DetectSleep:
 	def begin(self,testVideoPath,testVideoTextFilePath,modelPath):
 		getFrameFromVideo(self,testVideoPath,testVideoTextFilePath,modelPath);
 
+
+DS=DetectSleep();
+print "Enter path to folder containing test videos:";
+videoPath=raw_input('---->');
+print "Enter path to file containing test video names:";
+textPath=raw_input('---->');
+print "Enter path to model:";
+modelPath=raw_input('---->');
+
+DS.begin(videoPath,textPath,modelPath);
