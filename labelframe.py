@@ -6,6 +6,7 @@ import time
 
 start = time.time()
 import argparse
+import imutils
 import cv2
 import itertools
 import os
@@ -17,6 +18,7 @@ import sys
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, ".."))
 
+#import openface and other neccessary libraries.
 import openface
 import openface.helper
 from openface.data import iterImgs
@@ -48,6 +50,8 @@ if args.verbose:
 
 start = time.time()
 align = NaiveDlib(args.dlibFaceMean, args.dlibFacePredictor)
+
+#Importing torch neural net
 net = openface.TorchWrap(args.networkModel, imgDim=args.imgDim, cuda=args.cuda)
 if args.verbose:
 	print("Loading the dlib and OpenFace models took {} seconds.".format(
@@ -59,7 +63,20 @@ class LabelFrame:
 		self.feat_x=[];
 		self.feat_y=[];
 
-	#def isValidFrame(self):
+	#Decide if a frame is hazy
+	def isValidFrame(self,imagePath):
+		image = cv2.imread(imagePath)
+		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+		fm = variance_of_laplacian(gray)
+		text = "Not Blurry"
+
+		if fm<int(100):
+			text="Blurry"
+
+		if text=="Blurry":
+			return False;
+		else:
+			return True;
 
 	#def setFrame(self):
 
@@ -85,16 +102,19 @@ class LabelFrame:
 				print("  + Original size: {}".format(img.shape));
 
 			start = time.time();
+			#getLargestFaceBounding : responsible for extracting the facial region from image.
 			bb = align.getLargestFaceBoundingBox(img);
 			if bb is None:
 				return;
 			al = align.align(img,bb);
-		
+			
+			#wide eye patches
 			e_l = al[18][0];
 			e_r = al[25][0];
 			e_t = al[21][1];
 			e_b = al[29][1];
-		
+			
+			#narrow eye patches
 			narrow_e_l = al[36][0];
 			narrow_e_r = al[45][0];
 			narrow_e_t = min(al[37][1],al[38][1],al[43][1],al[44][1]); 
@@ -115,23 +135,30 @@ class LabelFrame:
 			a,b,c = img1.shape;
 		
 			print a,b,c;
-		
+			
+			#Resizing all the image to the same size for concatenation
 			rs_img = cv2.resize(img, (b,a));
 			rs_img2 = cv2.resize(img2, (b,a));
 			rs_img3 = cv2.resize(img3, (b,a));
 		
+			#Concatenating the actual image,facial porion, wide eye patch, narrow patch.
 			vis = np.concatenate((rs_img, img1), axis=1);
 			vis2 = np.concatenate((vis, rs_img2), axis=1);
 			vis3 = np.concatenate((vis2, rs_img3), axis=1);
 		
+			#Storing the eye patches.
 			cv2.imwrite(path+"_eye_patch/"+str(num)+".jpg",img2);
 			cv2.imwrite(path+"_eye_patch/"+str(num)+".jpg",img3);
+			
+			#visualizing the eye patches.
 			cv2.imshow('visualization', vis3);
 			cv2.waitKey(1);
 			num+=1;
 
 		print "Eye patch extraction successful.Moving to labelling....";
 
+
+	#Representation of 128 dimensional features.
 	def getRep(self, imgPath):
 		if args.verbose:
 			print("Processing {}.".format(imgPath))
@@ -146,7 +173,10 @@ class LabelFrame:
 			print("-----\n")
 		return rep
 
+
+	#Processing videos.
 	def labelFrame(self,path):
+		#Looping through wide eye patches
 		for img in os.listdir(path+"/Frames_0_wide_eye_patch"):
                         #print img, "<<"
 			d = self.getRep(path+"/Frames_0_wide_eye_patch/"+img)
@@ -155,6 +185,7 @@ class LabelFrame:
 			self.feat_x.append(d)
 			self.feat_y.append(0);
 
+		#Looping through narrow eye patches.
 		for img in os.listdir(path+"/Frames_1_wide_eye_patch"):
 			d = self.getRep(path+"/Frames_1_wide_eye_patch/"+img)
 			print d.shape
