@@ -48,7 +48,7 @@ if args.verbose:
 
 start = time.time()
 align = NaiveDlib(args.dlibFaceMean, args.dlibFacePredictor)
-net = openface.TorchWrap(args.networkModel, imgDim=args.imgDim, cuda=args.cuda)
+
 if args.verbose:
 	print("Loading the dlib and OpenFace models took {} seconds.".format(
 		time.time() - start))
@@ -72,17 +72,18 @@ class FrameExtractor:
 			return;
 
 		videos=[];
-		for file in open(eyeStatePath):
-			file.rstrip('\n');
-			videos.append(file);
+                txt =np.loadtxt(eyeStatePath, dtype='str')
+                
+		for stf in txt:
+		
+			videos.append(stf[-1]);
 
 		return videos;
 
 	def createPatch(self,path_wide,path_narrow,img):
+
 		if img is None:
-			print "Couldn't open "+file+". Moving to next one.";continue;
-		if args.verbose:
-			print("  + Original size: {}".format(img.shape));
+                        return
 
 		start = time.time();
 		bb = align.getLargestFaceBoundingBox(img);
@@ -126,6 +127,7 @@ class FrameExtractor:
 	
 		#cv2.imwrite(path+"_eye_patch/"+str(self.frameCount)+".jpg",img2);
 		#cv2.imwrite(path+"_eye_patch/"+str(self.frameCount)+".jpg",img3);
+                print path_wide+str(self.frameCount)+".jpg"
 		cv2.imwrite(path_wide+str(self.frameCount)+".jpg",img2);
 		cv2.imwrite(path_narrow+str(self.frameCount)+".jpg",img3);
 		cv2.imshow('visualization', vis3);
@@ -134,7 +136,7 @@ class FrameExtractor:
 
 	def fetchFrame(self,eyeStatePath,eyeState):
 		self.videoFileName=self.getVideoFileName(eyeStatePath);
-		
+		print self.videoFileName
 		if not os.path.exists(self.videoFilePath+"/"+"Frames_"+str(eyeState)+"_wide_eye_patch/"):
 			os.makedirs(self.videoFilePath+"/Frames_"+ str(eyeState)+"_wide_eye_patch/");
 
