@@ -84,11 +84,9 @@ class DetectSleep:
 	def sendFrameToClassifier(self,img,clf):
 		if img is None:
 			return;
-		if arg.verbose:
-			print("  + Original size: {}".format(img.shape));
-
+		
 		start=time.time();
-		bb=getLargestFaceBoundingBox(img);
+		bb=align.getLargestFaceBoundingBox(img);
 
 		if bb is None:
 			return;
@@ -112,10 +110,10 @@ class DetectSleep:
 		img1 = img[t:b,l:r];
 		img2 = img[e_t:e_b,e_l:e_r];
 		img3 = img[narrow_e_t:narrow_e_b,narrow_e_l:narrow_e_r];
-		d = getRep(img2);
+		d = self.getRep(img2);
 		
 		#res = clf.predict(d);
-		self.eyeState=getEyeState(d,clf);
+		self.eyeState=self.getEyeState(d,clf);
 		print self.eyeState;
 		var="close";
 
@@ -149,7 +147,7 @@ class DetectSleep:
 			while(cap.isOpened() and frameIterator<frameCount):
 				self.frameSuccess,self.videoFrame=cap.read();
 
-				sendFrameToClassifier(self.videoFrame,clf);
+				self.sendFrameToClassifier(self.videoFrame,clf);
 				
 				frameIterator+=1;
 				i+=1;
@@ -158,7 +156,7 @@ class DetectSleep:
 		cv2.destroyAllWindows();
 
 	def begin(self,testVideoPath,testVideoTextFilePath,modelPath):
-		getFrameFromVideo(self,testVideoPath,testVideoTextFilePath,modelPath);
+		self.getFrameFromVideo(testVideoPath,testVideoTextFilePath,modelPath);
 
 
 DS=DetectSleep();
