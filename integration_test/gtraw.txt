@@ -1,0 +1,19 @@
+#VID_20170502_041010.mp4
+Frame 0-6 open
+Frame 7-59 closed
+Frame 60-97 open
+#VID_20170502_230437.3gp
+Frame 0-64 open
+Frame 65-126 closed
+Frame 127-183 open
+Frame 184-247 closed
+Frame 248-258 open
+#VID_20170502_232804.3gp
+Frame 0-111 open
+Fame 112-179 closed
+Frame 180-212 open
+Frame 213-243 closed
+Frame 244-253 open
+#VID_20170330_154952.mp4
+Frame 0-700 open
+##############
