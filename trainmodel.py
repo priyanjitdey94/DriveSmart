@@ -78,12 +78,15 @@ class TrainModel:
 	def setModelFormat(self,format):
 		self.modelFormat=format;
 
+	#Creating a SVM classifier and feeding the training data
 	def startTraining(self):
 		feat_x = np.load('/home/prithviraj/open_feature_new/of.npy');
 		feat_y= np.load('/home/prithviraj/open_feature_new/oflabel.npy');
 		print feat_x.shape, feat_y.shape;
 		print "Training...........";
+
+		#defining a SVM classifier
 		clf = svm.SVC();
-		clf.fit(feat_x, feat_y);
+		clf.fit(feat_x, feat_y);	#feeding data to SVM
 		joblib.dump(clf, '/home/prithviraj/open_feature_new/trained_svm.pkl',compress=1);
 		print "Training Complete.";
