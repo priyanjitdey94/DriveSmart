@@ -47,7 +47,7 @@ if args.verbose:
 
 start = time.time()
 align = NaiveDlib(args.dlibFaceMean, args.dlibFacePredictor)
-net = openface.TorchWrap(args.networkModel, imgDim=args.imgDim, cuda=args.cuda)
+#net = openface.TorchWrap(args.networkModel, imgDim=args.imgDim, cuda=args.cuda)
 if args.verbose:
 	print("Loading the dlib and OpenFace models took {} seconds.".format(
 		time.time() - start))
@@ -80,9 +80,7 @@ FE.fetchFrame(openTextPath,1);
 #LF.getEyePatch(videoPath+"/Frames_1");
 
 #Labelling Eye Patches
-LF.labelFrame(videoPath+"/Frames_0_wide_eye_patch",0);
-LF.labelFrame(videoPath+"/Frames_1_wide_eye_patch",1);
+LF.labelFrame(videoPath);
 
 #Training Model
 TM.startTraining();
-
