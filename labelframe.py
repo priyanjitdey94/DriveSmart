@@ -132,7 +132,7 @@ class LabelFrame:
 
 		print "Eye patch extraction successful.Moving to labelling....";
 
-	def getRep(imgPath):
+	def getRep(self, imgPath):
 		if args.verbose:
 			print("Processing {}.".format(imgPath))
 		img = cv2.imread(imgPath)
@@ -147,15 +147,16 @@ class LabelFrame:
 		return rep
 
 	def labelFrame(self,path):
-		for img in os.listdir(path+"Frames_0_wide_eye_patch"):
-			d = self.getRep(path+"/"+img)
+		for img in os.listdir(path+"/Frames_0_wide_eye_patch"):
+                        #print img, "<<"
+			d = self.getRep(path+"/Frames_0_wide_eye_patch/"+img)
 			print d.shape
 			print "Appending..", img
 			self.feat_x.append(d)
 			self.feat_y.append(0);
 
-		for img in os.listdir(path+"Frames_1_wide_eye_patch"):
-			d = self.getRep(path+"/"+img)
+		for img in os.listdir(path+"/Frames_1_wide_eye_patch"):
+			d = self.getRep(path+"/Frames_1_wide_eye_patch/"+img)
 			print d.shape
 			print "Appending..", img
 			self.feat_x.append(d)
@@ -163,5 +164,5 @@ class LabelFrame:
 
 		print "Storing............"
 		os.mkdir('/home/prithviraj/open_feature_new')
-		np.save('/home/prithviraj/open_feature_new/of.npy', feat_x)
-		np.save('/home/prithviraj/open_feature_new/oflabel.npy', feat_y)
+		np.save('/home/prithviraj/open_feature_new/of.npy', self.feat_x)
+		np.save('/home/prithviraj/open_feature_new/oflabel.npy', self.feat_y)
