@@ -39,7 +39,7 @@ class CameraClass(object):
 		        if cv2.waitKey(1) & 0xFF == ord('q'):
 		            break
 		    else:
-		        break
+		        break  
 
 		# Release everything if job is finished
 		print "Stopping Camera";
