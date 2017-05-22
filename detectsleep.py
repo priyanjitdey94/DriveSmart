@@ -53,6 +53,8 @@ if args.verbose:
 	print("Loading the dlib and OpenFace models took {} seconds.".format(
 		time.time() - start))
 
+from imutils import paths;
+from facecapture import FaceCapture;
 
 
 class DetectSleep:
@@ -80,6 +82,26 @@ class DetectSleep:
 			print(rep);
 			print("-----\n");
 		return rep;
+
+	def canImageBeConsidered(self,img):
+		if img is None:
+			print "Not a valid image...";
+			return;
+		gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY);
+		fm=cv2.Laplacian(img,cv2.CV_64F).var();
+		res=True;
+
+		if fm<100:
+			res=False;
+		
+		return res;
+
+
+	def alertRequired(self):
+		alertTime=1;
+		alertFrequency=500;
+		os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( alertTime, alertFrequency));
+	
 
 	def sendFrameToClassifier(self,img,clf):
 		if img is None:
@@ -125,9 +147,7 @@ class DetectSleep:
 		cv2.putText(img,var, (70,70), cv2.FONT_HERSHEY_SIMPLEX, 4,(0,0,255), 8); 
 		cv2.imshow("test video", img);
 		if self.eyeState==0:
-			alertTime=1;
-			alertFrequency=500;
-			os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( alertTime, alertFrequency));
+			self.alertRequired();
 
 		cv2.waitKey(1);
 
@@ -158,6 +178,14 @@ class DetectSleep:
 	def begin(self,testVideoPath,testVideoTextFilePath,modelPath):
 		self.getFrameFromVideo(testVideoPath,testVideoTextFilePath,modelPath);
 
+
+FC=FaceCapture();
+
+cam=FC.isCameraWorking();
+
+if cam is False:
+	print "Camera not working. Aborting.....";
+	sys.exit();
 
 DS=DetectSleep();
 print "Enter path to folder containing test videos:";
