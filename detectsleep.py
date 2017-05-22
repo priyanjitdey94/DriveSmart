@@ -1,5 +1,5 @@
 #class to test videos for detecting open and closed eyes.
-
+#Import neccessary libraries.
 import Image;
 import glob;
 import time
@@ -17,6 +17,7 @@ import sys
 fileDir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(fileDir, ".."))
 
+#OpenFace Face recognition library
 import openface
 import openface.helper
 from openface.data import iterImgs
@@ -26,6 +27,7 @@ modelDir = os.path.join(fileDir, '..', 'models')
 dlibModelDir = os.path.join(modelDir, 'dlib')
 openfaceModelDir = os.path.join(modelDir, 'openface')
 
+#Arguement Parser.
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--dlibFaceMean', type=str, help="Path to dlib's face predictor.",default=os.path.join(dlibModelDir, "mean.csv"))
@@ -48,7 +50,7 @@ if args.verbose:
 
 start = time.time()
 align = NaiveDlib(args.dlibFaceMean, args.dlibFacePredictor)
-net = openface.TorchWrap(args.networkModel, imgDim=args.imgDim, cuda=args.cuda)
+net = openface.TorchWrap(args.networkModel, imgDim=args.imgDim, cuda=args.cuda)		#Import the neural net
 if args.verbose:
 	print("Loading the dlib and OpenFace models took {} seconds.".format(
 		time.time() - start))
@@ -56,7 +58,7 @@ if args.verbose:
 from imutils import paths;
 from facecapture import FaceCapture;
 
-
+#Class definition begins.
 class DetectSleep:
 
 	def __init__(self):
@@ -68,14 +70,15 @@ class DetectSleep:
 		self.meanFrame=None;
 		self.eyeState=0;
 
-
+	#Predicts the state of eye as open or closed.
 	def getEyeState(self,var,clf):
 		res=clf.predict(var);
 		return res;
 
+	#Extract features.
 	def getRep(self,img):
 		img=cv2.resize(img,(96,96));
-		rep=net.forwardImage(img);
+		rep=net.forwardImage(img);	#Sending frame to neural net.
 		if args.verbose:
 			print("  + OpenFace forward pass took {} seconds.".format(time.time() - start))
 			print("Representation:");
@@ -83,12 +86,13 @@ class DetectSleep:
 			print("-----\n");
 		return rep;
 
+	#Check Blurriness factor.
 	def canImageBeConsidered(self,img):
 		if img is None:
 			print "Not a valid image...";
 			return;
 		gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY);
-		fm=cv2.Laplacian(img,cv2.CV_64F).var();
+		fm=cv2.Laplacian(img,cv2.CV_64F).var();		#Extracting the laplacian matrix
 		res=True;
 
 		if fm<100:
@@ -96,13 +100,14 @@ class DetectSleep:
 		
 		return res;
 
-
+	#Generate alert sound in case of emergency
 	def alertRequired(self):
 		alertTime=1;
 		alertFrequency=500;
 		os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( alertTime, alertFrequency));
-	
 
+
+	#Eye patch extraction
 	def sendFrameToClassifier(self,img,clf):
 		if img is None:
 			return;
@@ -114,24 +119,29 @@ class DetectSleep:
 			return;
 		al=align.align(img,bb);
 		
+		#wide eye patch
 		e_l = al[18][0];
 		e_r = al[25][0];
 		e_t = al[21][1];
 		e_b = al[29][1];
+
+		#narrow eye patch
 		narrow_e_l = al[36][0];
 		narrow_e_r = al[45][0];
 		narrow_e_t = min(al[37][1],al[38][1],al[43][1],al[44][1]); 
 		narrow_e_b = max(al[41][1], al[40][1],al[46][1],al[47][1]);
 		print np.asarray(bb),"<<<<<<";
 
+		#coordinates of the eyepatch boundaries
 		t = bb.top();
 		b = bb.bottom();
 		l = bb.left();
 		r = bb.right();
 		print l,r,t,b;
-		img1 = img[t:b,l:r];
-		img2 = img[e_t:e_b,e_l:e_r];
-		img3 = img[narrow_e_t:narrow_e_b,narrow_e_l:narrow_e_r];
+
+		img1 = img[t:b,l:r];	#Actual patch
+		img2 = img[e_t:e_b,e_l:e_r];	#Wide eye patch
+		img3 = img[narrow_e_t:narrow_e_b,narrow_e_l:narrow_e_r];	#Narrow eye patch
 		d = self.getRep(img2);
 		
 		#res = clf.predict(d);
@@ -143,7 +153,7 @@ class DetectSleep:
 		if self.eyeState ==1:
 		  var = "open";
 
-
+		#Print to screen
 		cv2.putText(img,var, (70,70), cv2.FONT_HERSHEY_SIMPLEX, 4,(0,0,255), 8); 
 		cv2.imshow("test video", img);
 		if self.eyeState==0:
@@ -151,12 +161,14 @@ class DetectSleep:
 
 		cv2.waitKey(1);
 
+
+	#Extract frames from input videos.
 	def getFrameFromVideo(self,testVideoPath,testVideoTextFilePath,modelPath):
 		vids=os.listdir(testVideoPath);
 		videoList=np.loadtxt(testVideoTextFilePath,dtype='str');
 
 		i=0;
-		clf=joblib.load(modelPath);
+		clf=joblib.load(modelPath);		#Load the videos from given path in a list
 		for video in videoList:
 			print video;
 			cap=cv2.VideoCapture(testVideoPath+"/"+video[-1]);
@@ -181,7 +193,7 @@ class DetectSleep:
 
 FC=FaceCapture();
 
-cam=FC.isCameraWorking();
+cam=FC.isCameraWorking();	#Check if camera is working.
 
 if cam is False:
 	print "Camera not working. Aborting.....";
