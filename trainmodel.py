@@ -52,7 +52,9 @@ align = NaiveDlib(args.dlibFaceMean, args.dlibFacePredictor)
 if args.verbose:
 	print("Loading the dlib and OpenFace models took {} seconds.".format(
 		time.time() - start))
+######################################################################################################
 
+#Class definition for training model using SVM.
 class TrainModel:
 
 	def __init__(self):
@@ -90,3 +92,36 @@ class TrainModel:
 		clf.fit(feat_x, feat_y);	#feeding data to SVM
 		joblib.dump(clf, '/home/prithviraj/open_feature_new/trained_svm.pkl',compress=1);
 		print "Training Complete.";
+
+
+#import required classes.
+from frameextractor import FrameExtractor;
+from labelframe import LabelFrame;
+
+#create objects.
+FE=FrameExtractor();
+LF=LabelFrame();
+TM=TrainModel();
+
+print "====== Welcome to DriveSmart Training Module ======";
+print "Enter the path to the video folder:";
+videoPath=raw_input('--->');
+print "Enter the text file containing list of videos with closed eyes:";
+closedTextPath=raw_input('--->');
+print "Enter the text file containing list of videos with open eyes:";
+openTextPath=raw_input('--->');
+
+#Extracting Frames 
+FE.setVideoFileName(videoPath);
+FE.fetchFrame(closedTextPath,0);
+FE.fetchFrame(openTextPath,1);
+
+#Extracting Eye Patches
+#LF.getEyePatch(videoPath+"/Frames_0");
+#LF.getEyePatch(videoPath+"/Frames_1");
+
+#Labelling Eye Patches
+LF.labelFrame(videoPath);
+
+#Training Model
+TM.startTraining();
