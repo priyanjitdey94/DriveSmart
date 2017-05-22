@@ -3,7 +3,7 @@
 import cv2;
 import numpy as np;
 
-from videoCamera import CameraClass;
+from videocamera import CameraClass;
 
 class FaceCapture(CameraClass):
 
