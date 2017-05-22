@@ -191,9 +191,9 @@ class DetectSleep:
 		self.getFrameFromVideo(testVideoPath,testVideoTextFilePath,modelPath);
 
 
-FC=FaceCapture();
-
-cam=FC.isCameraWorking();	#Check if camera is working.
+#FC=FaceCapture();
+cam=True;
+#cam=FC.isCameraWorking();	#Check if camera is working.
 
 if cam is False:
 	print "Camera not working. Aborting.....";
