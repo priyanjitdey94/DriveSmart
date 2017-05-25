@@ -2,7 +2,7 @@
 
 *AI system to prevent drivers from falling asleep*
 
-[release-image]: http://img.shields.io/badge/release-0.2.1-blue.svg?style=flat
+[release-image]: http://img.shields.io/badge/release-1.0-blue.svg?style=flat
 [releases]: https://github.com/priyanjitdey94/DriveSmart/releases
 
 ---
@@ -20,7 +20,8 @@ by team PiedPiper.
 + Download this repository as a zip.
 + Extract 
 + For training a new model run trainmodel.py and follow steps.
-+ For using a pre-trained model run detectsleep.py and follow steps.
++ For using DriveSmart in recorded-video mode, run detectsleep_video.py
++ For using DriveSmart in realtime mode, run detectsleep_realtime.py
 + Make sure proper paths are provided.
 
 *In case of problems or confusion please issue*
