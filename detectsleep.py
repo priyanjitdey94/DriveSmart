@@ -68,6 +68,7 @@ class DetectSleep:
 		self.frameTwo=None;
 		self.frameThree=None;
 		self.meanFrame=None;
+		self.closedFrameCount=0;
 		self.eyeState=0;
 
 	#Predicts the state of eye as open or closed.
@@ -148,15 +149,16 @@ class DetectSleep:
 		self.eyeState=self.getEyeState(d,clf);
 		print self.eyeState;
 		var="close";
+		self.closedFrameCount+=1;
 
-		
 		if self.eyeState ==1:
 		  var = "open";
+		  self.closedFrameCount=0;
 
 		#Print to screen
 		cv2.putText(img,var, (70,70), cv2.FONT_HERSHEY_SIMPLEX, 4,(0,0,255), 8); 
 		cv2.imshow("test video", img);
-		if self.eyeState==0:
+		if self.closedFrameCount >=5:
 			self.alertRequired();
 
 		cv2.waitKey(1);
