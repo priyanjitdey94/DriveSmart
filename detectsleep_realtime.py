@@ -197,32 +197,34 @@ class DetectSleep:
         cv2.waitKey(1);
 
     #Extract frames from input videos.
-    def getFrameFromVideo(self,testVideoPath,testVideoTextFilePath):
-        vids=os.listdir(testVideoPath);
-        videoList=np.loadtxt(testVideoTextFilePath,dtype='str');
+    def getFrameFromVideo(self):
+        cv2.namedWindow("DriveSmart");
+        cap=cv2.VideoCapture(0);
+        frameIterator=0;
 
-        i=0;
-        for video in videoList:
-            print video;
-            cap=cv2.VideoCapture(testVideoPath+"/"+video[-1]);
-            frameCount=int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT));
-            print frameCount;
+        if cap.isOpened():      # try to get the first frame
+            self.frameSuccess,self.videoFrame = cap.read();
+        else:
+            self.frameSuccess = False;
+
+        while self.frameSuccess:
+            cv2.imshow("DriveSmart", self.videoFrame);
+            self.frameSuccess,self.videoFrame = cap.read();
+            frameIterator=frameIterator%60;
+            key = cv2.waitKey(3);
+            if key == 27: # exit on ESC
+                break;
             
-            frameIterator=0;
-            while(cap.isOpened() and frameIterator<frameCount):
-                self.frameSuccess,self.videoFrame=cap.read();
-
-                if frameIterator%self.framesPerSecond == 0:
-                    self.sendFrameToClassifier(self.videoFrame);
-                
-                frameIterator+=1;
-                i+=1;
+            if frameIterator%self.framesPerSecond==0:
+                self.sendFrameToClassifier(self.videoFrame);
+            
+            frameIterator+=1;
 
         cap.release();
-        cv2.destroyAllWindows();
+        cv2.destroyWindow("DriveSmart");
 
-    def begin(self,testVideoPath,testVideoTextFilePath):
-        self.getFrameFromVideo(testVideoPath,testVideoTextFilePath);
+    def begin(self):
+        self.getFrameFromVideo();
 
 
 #FC=FaceCapture();
@@ -234,9 +236,10 @@ if cam is False:
     sys.exit();
 
 DS=DetectSleep();
+'''
 print "Enter path to folder containing test videos:";
 videoPath=raw_input('---->');
 print "Enter path to file containing test video names:";
 textPath=raw_input('---->');
-
-DS.begin(videoPath,textPath);
+'''
+DS.begin();
