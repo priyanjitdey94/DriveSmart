@@ -14,25 +14,7 @@ from videocamera import CameraClass;
 
 class RecordVideo(CameraClass):
 
-	def __init__(self,url,vFormat):
-		#super(RecordVideo, self).__init__(0,"mp4");
-		self.driveLocation=url;
-		self.preferedFormat=vFormat;
 
-	def setDriveLocation(self,url):
-		self.driveLocation=url;
-
-	def getDriveLocation(self):
-		return self.driveLocation;
-
-	def setPreferedFormat(self,vFormat):
-		self.preferedFormat=vFormat;
-
-	def getPreferedFormat(self):
-		return self.preferedFormat;
-
-	def startRecording(self):
-		CameraClass.startCamera(0);
 
 
 	
