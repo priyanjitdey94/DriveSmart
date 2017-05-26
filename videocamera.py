@@ -27,19 +27,7 @@ class CameraClass(object):
 		h=int(cap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT ))
 		out = cv2.VideoWriter('output.avi',fourcc, 20.0, (int(w),int(h) ));
 
-		while(cap.isOpened()):
-		    ret, frame = cap.read()
-		    if ret==True:
-		        frame = cv2.flip(frame,0)
-
-		        # write the flipped frame
-		        out.write(frame)
-
-		        cv2.imshow('frame',frame)
-		        if cv2.waitKey(1) & 0xFF == ord('q'):
-		            break
-		    else:
-		        break  
+		 
 
 		# Release everything if job is finished
 		print "Stopping Camera";
